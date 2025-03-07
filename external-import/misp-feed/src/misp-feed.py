@@ -225,9 +225,14 @@ class MispFeed:
             A string with the content or None in case of failure.
         """
         try:
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+                "Accept": "application/json"
+            }
+            req = urllib.request.Request(url, headers=headers)
             return (
                 urllib.request.urlopen(
-                    url,
+                    req,
                     context=ssl.create_default_context(),
                 )
                 .read()
@@ -986,7 +991,7 @@ class MispFeed:
         event_threat_level,
         create_relationships,
     ):
-        if attribute["type"] == "link" and attribute["category"] == "External analysis":
+        if attribute["type"] in ["link", "url"] and attribute["category"] == "External analysis":
             return None
         resolved_attributes = self._resolve_type(attribute["type"], attribute["value"])
         if resolved_attributes is None:
